@@ -128,6 +128,28 @@
 				to_chat(user, "<span class='warning'>There is nothing in [O] to put in [src]!</span>")
 				return FALSE
 
+		if(istype(O, /obj/item/organ_storage))
+			var/obj/item/organ_storage/S = O
+			if(S.contents.len)
+				var/obj/item/I = S.contents[1]
+				if(accept_check(I))
+					load(I)
+					user.visible_message("[user] inserts \the [I] into \the [src].", \
+									 "<span class='notice'>You insert \the [I] into \the [src].</span>")
+					O.cut_overlays()
+					O.icon_state = "evidenceobj"
+					O.desc = "A container for holding body parts."
+					if(visible_contents)
+						update_icon()
+					updateUsrDialog()
+					return TRUE
+				else
+					to_chat(user, "<span class='warning'>[src] does not accept [I]!</span>")
+					return FALSE
+			else
+				to_chat(user, "<span class='warning'>There is nothing in [O] to put into [src]!</span>")
+				return FALSE
+
 	if(user.a_intent != INTENT_HARM)
 		to_chat(user, "<span class='warning'>\The [src] smartly refuses [O].</span>")
 		updateUsrDialog()
@@ -426,14 +448,14 @@
 /obj/machinery/smartfridge/organ/RefreshParts()
 	for(var/obj/item/stock_parts/matter_bin/B in component_parts)
 		max_n_of_items = 20 * B.rating
-		repair_rate = max(0, STANDARD_ORGAN_HEALING * (B.rating - 1))
+		repair_rate = max(0, STANDARD_ORGAN_HEALING * (B.rating - 1) * 0.5)
 
-/obj/machinery/smartfridge/organ/process()
+/obj/machinery/smartfridge/organ/process(delta_time)
 	for(var/organ in contents)
 		var/obj/item/organ/O = organ
 		if(!istype(O))
 			return
-		O.applyOrganDamage(-repair_rate)
+		O.applyOrganDamage(-repair_rate * delta_time)
 
 /obj/machinery/smartfridge/organ/Exited(obj/item/organ/AM, atom/newLoc)
 	. = ..()

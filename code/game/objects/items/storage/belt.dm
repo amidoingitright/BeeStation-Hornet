@@ -245,7 +245,7 @@
 /obj/item/storage/belt/security/ComponentInitialize()
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	STR.max_items = 6
+	STR.max_items = 5
 	STR.max_combined_w_class = 18
 	STR.max_w_class = WEIGHT_CLASS_NORMAL
 	STR.can_hold = typecacheof(list(
@@ -276,7 +276,6 @@
 	new /obj/item/grenade/flashbang(src)
 	new /obj/item/assembly/flash/handheld(src)
 	new /obj/item/melee/baton/loaded(src)
-	new /obj/item/club(src)
 	update_icon()
 
 /obj/item/storage/belt/security/deputy
@@ -301,7 +300,7 @@
 /obj/item/storage/belt/security/webbing/ComponentInitialize()
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	STR.max_items = 7
+	STR.max_items = 6
 	STR.max_combined_w_class = 21
 
 /obj/item/storage/belt/mining
@@ -356,7 +355,8 @@
 		/obj/item/storage/bag/plants,
 		/obj/item/stack/marker_beacon,
 		/obj/item/restraints/legcuffs/bola/watcher,
-		/obj/item/claymore/bone
+		/obj/item/claymore/bone,
+		/obj/item/skeleton_key
 		))
 
 
@@ -541,7 +541,7 @@
 		/obj/item/grenade/smokebomb = 4,
 		/obj/item/grenade/empgrenade = 1,
 		/obj/item/grenade/empgrenade = 1,
-		/obj/item/grenade/syndieminibomb/concussion/frag = 10,
+		/obj/item/grenade/frag = 10,
 		/obj/item/grenade/gluon = 4,
 		/obj/item/grenade/chem_grenade/incendiary = 2,
 		/obj/item/grenade/chem_grenade/facid = 1,
@@ -606,7 +606,7 @@
 		/obj/item/melee/flyswatter,
 		/obj/item/assembly/mousetrap,
 		/obj/item/paint/paint_remover,
-		/obj/item/twohanded/pushbroom
+		/obj/item/pushbroom
 		))
 
 /obj/item/storage/belt/janitor/full/PopulateContents()
@@ -776,4 +776,31 @@
 
 /obj/item/storage/belt/sabre/PopulateContents()
 	new /obj/item/melee/sabre(src)
+	update_icon()
+
+/obj/item/storage/belt/sabre/mime
+	name = "Baguette"
+	desc = "Bon appetit!"
+	icon = 'icons/obj/food/burgerbread.dmi'
+	icon_state = "baguette"
+	item_state = "baguette"
+	w_class = WEIGHT_CLASS_BULKY
+	slot_flags = ITEM_SLOT_BACK|ITEM_SLOT_BELT
+
+/obj/item/storage/belt/sabre/mime/update_icon()
+	icon_state = "baguette"
+	item_state = "baguette"
+
+/obj/item/storage/belt/sabre/mime/ComponentInitialize()
+	. = ..()
+	var/datum/component/storage/MTR = GetComponent(/datum/component/storage)
+	MTR.max_items = 1
+	MTR.rustle_sound = FALSE
+	MTR.max_w_class = WEIGHT_CLASS_BULKY
+	MTR.can_hold = typecacheof(list(
+		/obj/item/melee/sabre/mime
+		))
+
+/obj/item/storage/belt/sabre/mime/PopulateContents()
+	new /obj/item/melee/sabre/mime(src)
 	update_icon()

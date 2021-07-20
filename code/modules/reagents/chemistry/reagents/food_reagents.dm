@@ -671,11 +671,11 @@
 	color = "#b5a213"
 	taste_description = "tingling mushroom"
 
-/datum/reagent/consumable/tinlux/reaction_mob(mob/living/M)
+/datum/reagent/consumable/tinlux/on_mob_metabolize(mob/living/carbon/M)
 	M.set_light(2)
 
-/datum/reagent/consumable/tinlux/on_mob_end_metabolize(mob/living/M)
-	M.set_light(-2)
+/datum/reagent/consumable/tinlux/on_mob_end_metabolize(mob/living/carbon/M)
+	M.set_light(0)
 
 /datum/reagent/consumable/vitfro
 	name = "Vitrium Froth"
@@ -711,8 +711,8 @@
 		var/mob/living/carbon/human/H = M
 		var/datum/species/ethereal/E = H.dna?.species
 		E.adjust_charge(5*REM)
-	else if(prob(25)) //scp13 optimization
-		M.electrocute_act(rand(10,15), "Liquid Electricity in their body", 1) //lmao at the newbs who eat energy bars
+	else if(prob(3)) //scp13 optimization
+		M.electrocute_act(rand(3,5), "Liquid Electricity in their body", 1) //lmao at the newbs who eat energy bars
 		playsound(M, "sparks", 50, 1)
 	return ..()
 

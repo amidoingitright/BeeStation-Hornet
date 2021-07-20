@@ -139,7 +139,7 @@
 				CM.lastTimeUsed = world.time
 				playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, 0)
 				comms_send(station_name(), input, "Comms_Console", CONFIG_GET(flag/insecure_announce))
-				minor_announce(input, title = "Outgoing message to allied station")
+				minor_announce(input, title = "Outgoing message to allied station", html_encode = FALSE)
 				usr.log_talk(input, LOG_SAY, tag="message to the other server")
 				message_admins("[ADMIN_LOOKUPFLW(usr)] has sent a message to the other server.")
 				deadchat_broadcast("<span class='deadsay bold'>[usr.real_name] has sent an outgoing message to the other station(s).</span>", usr)
@@ -167,7 +167,6 @@
 						if(points_to_check >= S.credit_cost)
 							SSshuttle.shuttle_purchased = TRUE
 							SSshuttle.unload_preview()
-							SSshuttle.load_template(S)
 							SSshuttle.existing_shuttle = SSshuttle.emergency
 							SSshuttle.action_load(S)
 							D.adjust_money(-S.credit_cost)
@@ -324,7 +323,7 @@
 				Nuke_request(input, usr)
 				to_chat(usr, "<span class='notice'>Request sent.</span>")
 				usr.log_message("has requested the nuclear codes from CentCom", LOG_SAY)
-				priority_announce("The codes for the on-station nuclear self-destruct have been requested by [usr]. Confirmation or denial of this request will be sent shortly.", "Nuclear Self Destruct Codes Requested",'sound/ai/commandreport.ogg')
+				priority_announce("The codes for the on-station nuclear self-destruct have been requested by [usr]. Confirmation or denial of this request will be sent shortly.", "Nuclear Self-Destruct Codes Requested", SSstation.announcer.get_rand_report_sound())
 				CM.lastTimeUsed = world.time
 
 

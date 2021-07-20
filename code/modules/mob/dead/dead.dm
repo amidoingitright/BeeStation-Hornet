@@ -12,13 +12,14 @@ INITIALIZE_IMMEDIATE(/mob/dead)
 		stack_trace("Warning: [src]([type]) initialized multiple times!")
 	flags_1 |= INITIALIZED_1
 	tag = "mob_[next_mob_id++]"
-	GLOB.mob_list += src
+	add_to_mob_list()
 
 	prepare_huds()
 
 	if(length(CONFIG_GET(keyed_list/cross_server)))
 		add_verb(/mob/dead/proc/server_hop)
 	set_focus(src)
+	become_hearing_sensitive()
 	return INITIALIZE_HINT_NORMAL
 
 /mob/dead/canUseStorage()

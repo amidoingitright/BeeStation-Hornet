@@ -76,7 +76,7 @@
 		O.setOrganDamage(0)
 	for(var/thing in M.diseases)
 		var/datum/disease/D = thing
-		if(D.severity == DISEASE_SEVERITY_BENEFICIAL || D.severity == DISEASE_SEVERITY_POSITIVE)
+		if(D.danger == DISEASE_BENEFICIAL || D.danger == DISEASE_POSITIVE)
 			continue
 		D.cure()
 	..()
@@ -249,7 +249,7 @@
 			M.adjustToxLoss(0.5*reac_volume)
 			if(show_message)
 				to_chat(M, "<span class='warning'>You don't feel so good...</span>")
-		else if(M.getFireLoss())
+		else if(M.getFireLoss() && method == PATCH)
 			M.adjustFireLoss(-reac_volume)
 			M.adjustStaminaLoss(reac_volume*2)
 			if(show_message)
@@ -303,7 +303,7 @@
 			M.adjustToxLoss(0.5*reac_volume)
 			if(show_message)
 				to_chat(M, "<span class='warning'>You don't feel so good...</span>")
-		else if(M.getBruteLoss())
+		else if(M.getBruteLoss() && method == PATCH)
 			M.adjustBruteLoss(-reac_volume)
 			M.adjustStaminaLoss(reac_volume*2)
 			if(show_message)
@@ -420,8 +420,8 @@
 			if(show_message)
 				to_chat(M, "<span class='danger'>You feel your burns and bruises healing! It stings like hell!</span>")
 			SEND_SIGNAL(M, COMSIG_ADD_MOOD_EVENT, "painful_medicine", /datum/mood_event/painful_medicine)
-			//Has to be at less than THRESHOLD_UNHUSK burn damage and have 100 synthflesh before unhusking. Corpses dont metabolize.
-			if(HAS_TRAIT_FROM(M, TRAIT_HUSK, "burn") && M.getFireLoss() < THRESHOLD_UNHUSK && M.reagents.has_reagent(/datum/reagent/medicine/synthflesh, 100))
+			//Has to be at less than THRESHOLD_UNHUSK burn damage and have at least 100 synthflesh (currently inside the body + amount now being applied). Corpses dont metabolize.
+			if(HAS_TRAIT_FROM(M, TRAIT_HUSK, "burn") && M.getFireLoss() < THRESHOLD_UNHUSK && (M.reagents.get_reagent_amount(/datum/reagent/medicine/synthflesh) + reac_volume) >= 100)
 				M.cure_husk("burn")
 				M.visible_message("<span class='nicegreen'>You successfully replace most of the burnt off flesh of [M].")
 	..()
@@ -479,6 +479,7 @@
 
 /datum/reagent/medicine/liquid_solder/on_mob_life(mob/living/M)
 	M.adjustOrganLoss(ORGAN_SLOT_BRAIN, (-3*REM))
+	M.hallucination = max(0, M.hallucination - 10)
 	if(iscarbon(M))
 		var/mob/living/carbon/C = M
 		if(prob(30) && C.has_trauma_type(BRAIN_TRAUMA_SPECIAL))
@@ -914,20 +915,7 @@
 			M.do_jitter_animation(10)
 			addtimer(CALLBACK(M, /mob/living/carbon.proc/do_jitter_animation, 10), 40) //jitter immediately, then again after 4 and 8 seconds
 			addtimer(CALLBACK(M, /mob/living/carbon.proc/do_jitter_animation, 10), 80)
-			sleep(100) //so the ghost has time to re-enter
-
-
-			var/mob/living/carbon/H = M
-			for(var/organ in H.internal_organs)
-				var/obj/item/organ/O = organ
-				O.setOrganDamage(0)
-
-			M.adjustOxyLoss(-20, 0)
-			M.adjustToxLoss(-20, 0)
-			M.updatehealth()
-			if(M.revive())
-				M.emote("gasp")
-				log_combat(M, M, "revived", src)
+			addtimer(CALLBACK(M, /mob/living.proc/revive, FALSE, FALSE), 100)
 	..()
 
 /datum/reagent/medicine/strange_reagent/on_mob_life(mob/living/carbon/M)
